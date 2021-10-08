@@ -17,6 +17,9 @@ session_file = os.environ.get("telegram_session_file") #this is the username. It
 #optional
 password = os.environ.get("telegram_password")
 
+#giphy
+giphy_api_key =os.environ.get("giphy_api")
+ 
 def checkEnvironment():
     print(api_hash)
     print(phone)
@@ -28,7 +31,7 @@ checkEnvironment()
 #file =  "C:\\Users\\eddie\\Desktop\\telegram coding\\"
 
 def getgif():
-    url = "https://api.giphy.com/v1/gifs/random?api_key=EeYORGXmMWRh2ZQUySsrHr88Dl12amXh&tag=&rating=R"
+    url = "https://api.giphy.com/v1/gifs/random?api_key=" +giphy_api_key+ "&tag=&rating=R"
     #r = requests.get(url = url)
     #print(r.url)
     #print(r.content)
