@@ -6,3 +6,7 @@ Libraries used: Telethon, giphy api, telegram access.
 - telegram session
 - Replying with random giphy
 - Calling random giphy and downloading it to local.
+
+
+Basic python and references available at:
+https://github.com/dirtyprototyper/pythonbasics
