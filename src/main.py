@@ -5,6 +5,7 @@ import json
 import urllib
 import urllib.request
 import os
+import random
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -53,43 +54,62 @@ def getgif():
     return thefile
 
 
+def generate_random_response():
+    responses = [
+        "Hi there, sorry, but I'm away now. Please contact me later",
+        "Another time, I'm a busy man",
+        "Anything urgent, please call instead",
+    ]
+    index = random.randint(0, len(responses) - 1)
+    
+    return responses[index]
 
 #Auto-reply message
 message= "This user is asleep. Please do not distrub. ETR: ??"
 
-# When you run your script, the __name__ variable equals __main__. When you import the containing script, it will contain the name of the script.
-if __name__ == '__main__':
-    # Create the client and connect
-    # use sequential_updates=True to respond to messages one at a time
-    client = TelegramClient("../sessions/Goopher.session", api_id, api_hash, sequential_updates=True)
+# Create the client and connect
+# use sequential_updates=True to respond to messages one at a time
+with TelegramClient("anon", api_id, api_hash, sequential_updates=True) as client:
 
+    # The trigger that replies
     @client.on(events.NewMessage(incoming=True))
-    
     async def handle_new_message(event):
 
+        to = "me"
         if event.is_private:  # only auto-reply to private chats
             from_ = await event.client.get_entity(event.from_id)  # this lookup will be cached by telethon
 
-            if not from_.bot:  # don't auto-reply to bots
+            if not from_.bot:  # skip auto-reply to bots
                 print(time.asctime(), '-', event.message)  # optionally log time and message
                 time.sleep(1)  # pause for 1 second to rate-limit automatic replies
-       
+    
                 #if this particular person messages me.
                 if  event.message.peer_id.user_id ==555332310:
                     #send file to this particular person. (can be another person as well. So take note of the telegram username in the case"Johnnyboiii")
                     await client.send_file('Johnnyboiii',   getgif())
-
-                    
+                if "detonate" in event.message.raw_text:
+                    await client.send_message(to, "Detonating explosives. Countdown starting")
+                    for i in range(5, 0, -1):
+                        await client.send_message(to, str(i) + "...")
+                        time.sleep(1)
+                    await client.send_message(to, "That was a joke.")
                 #if anyone elses.
                 else:                
                     #spamm the poor guy anyways. :P
-                    await client.send_file('Johnnyboiii',   getgif())
+                    await client.send_file('Goopher', getgif())
                     #replies back to the original event with the message declared earlier.
-                    await event.respond(message)
-
+                    response = generate_random_response()
+                    await event.respond(response)
 
     print(time.asctime(), '-', 'Auto-replying...')
-    client.start(phone, password)
+
+    async def main():
+        response = generate_random_response()
+        await client.send_message(to, response)
+        
+    # client.loop.run_until_complete(main())
     client.run_until_disconnected()
     print(time.asctime(), '-', 'Stopped!')
+
+
 

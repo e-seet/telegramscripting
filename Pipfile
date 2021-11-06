@@ -1,0 +1,15 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+requests = "==2.25.1"
+python-dotenv = "==0.19.0"
+Telethon = "==1.21.1"
+pytelegrambotapi = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
