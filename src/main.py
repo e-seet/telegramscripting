@@ -71,11 +71,12 @@ message= "This user is asleep. Please do not distrub. ETR: ??"
 # use sequential_updates=True to respond to messages one at a time
 with TelegramClient("anon", api_id, api_hash, sequential_updates=True) as client:
 
+
+    to = "me"
     # The trigger that replies
     @client.on(events.NewMessage(incoming=True))
     async def handle_new_message(event):
 
-        to = "me"
         if event.is_private:  # only auto-reply to private chats
             from_ = await event.client.get_entity(event.from_id)  # this lookup will be cached by telethon
 
