@@ -1,5 +1,5 @@
 import time
-from telethon import TelegramClient, events
+from telethon import TelegramClient, client, events
 import requests
 import json
 import urllib
@@ -68,23 +68,15 @@ def generate_random_response():
 message= "This user is asleep. Please do not distrub. ETR: ??"
 to = "me"
 
-#newly added 2 lines
-client = TelegramClient(session_file, api_id, api_hash, sequential_updates=True)
-if __name__ == '__main__':
-
-
 # # Create the client and connect. Commented out the following 1 line
 # # use sequential_updates=True to respond to messages one at a time
-#  with TelegramClient("../sessions/EvolvedApeShit.session", api_id, api_hash, sequential_updates=True) as client:
-
-
-    client = TelegramClient("../sessions/EvolvedApeShit.session", api_id, api_hash, sequential_updates=True)
+client =  TelegramClient("../sessions/EvolvedApeShit.session", api_id, api_hash, sequential_updates=True)
+if __name__ == '__main__':
 
     # The trigger that replies
     @client.on(events.NewMessage(incoming=True))
-    
     async def handle_new_message(event):
-        print("incoming")
+
         if event.is_private:  # only auto-reply to private chats
             from_ = await event.client.get_entity(event.from_id)  # this lookup will be cached by telethon
 
@@ -104,23 +96,17 @@ if __name__ == '__main__':
                     await client.send_message(to, "That was a joke.")
                 #if anyone elses.
                 else:                
-                    #spamm the poor guy anyways. :P
-                    await client.send_file('EvolvedApeShit', getgif())
+                    #spamm the poor guy anyways. :P !Note: the first parameter for this is the telegram handler
+                    # await client.send_file('EvolvedApeShit', getgif())
                     #replies back to the original event with the message declared earlier.
-                    # response = generate_random_response()
-                    # print(response)
-                    print(time.asctime(), '-reached')  # optionally log time and message
+                    response = generate_random_response()
+                    print(time.asctime(), response)  # log time and message to see how fast the program is running.
+                    print("")
+                    await event.respond(response)
 
-                    await event.respond("response")
 
     print(time.asctime(), '-', 'Auto-replying...')
     client.start(phone, password)
-
-    #commented out def main
-    # async def main():
-    #     print("maiun")
-    #     response = generate_random_response()
-    #     await client.send_message(to, response)
         
     # client.loop.run_until_complete(main())
     client.run_until_disconnected()
