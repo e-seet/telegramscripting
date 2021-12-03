@@ -70,30 +70,34 @@ message= "This user is asleep. Please do not distrub. ETR: ??"
 # Create the client and connect
 # use sequential_updates=True to respond to messages one at a time
 with TelegramClient("anon", api_id, api_hash, sequential_updates=True) as client:
-
-
     to = "me"
     # The trigger that replies
+    @client.on(events.NewMessage())
+    async def handle_message(event):
+        print("Got your message")
+        print(event.from_id)
+        # print(event)
+        # await event.respond(f'Saved your photo babe')
+
     @client.on(events.NewMessage(incoming=True))
     async def handle_new_message(event):
-
         if event.is_private:  # only auto-reply to private chats
-            from_ = await event.client.get_entity(event.from_id)  # this lookup will be cached by telethon
-
-            if not from_.bot:  # skip auto-reply to bots
+            _from = await event.client.get_entity(event.from_id)  # this lookup will be cached by telethon
+            print(f"From: {_from}")
+            if not _from.bot:  # skip auto-reply to bots
                 print(time.asctime(), '-', event.message)  # optionally log time and message
                 time.sleep(1)  # pause for 1 second to rate-limit automatic replies
-    
+
                 #if this particular person messages me.
                 if  event.message.peer_id.user_id ==555332310:
                     #send file to this particular person. (can be another person as well. So take note of the telegram username in the case"Johnnyboiii")
-                    await client.send_file('Johnnyboiii',   getgif())
+                    await client.send_file('Johnnyboiii', getgif())
                 if "detonate" in event.message.raw_text:
-                    await client.send_message(to, "Detonating explosives. Countdown starting")
+                    await event.respond(to, "Detonating explosives. Countdown starting")
                     for i in range(5, 0, -1):
-                        await client.send_message(to, str(i) + "...")
+                        await event.respond(to, str(i) + "...")
                         time.sleep(1)
-                    await client.send_message(to, "That was a joke.")
+                    await event.respond(to, "That was a joke.")
                 #if anyone elses.
                 else:                
                     #spamm the poor guy anyways. :P
@@ -108,8 +112,8 @@ with TelegramClient("anon", api_id, api_hash, sequential_updates=True) as client
         response = generate_random_response()
         await client.send_message(to, response)
         
-    # client.loop.run_until_complete(main())
-    client.run_until_disconnected()
+    client.loop.run_until_complete(main())
+    # client.run_until_disconnected()
     print(time.asctime(), '-', 'Stopped!')
 
 
