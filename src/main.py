@@ -1,5 +1,5 @@
 import time
-from telethon import TelegramClient, events
+from telethon.sync import TelegramClient, events
 import requests
 import json
 import urllib
@@ -21,6 +21,7 @@ password = os.environ.get("telegram_password")
 #giphy
 giphy_api_key =os.environ.get("giphy_api")
  
+print(os.getcwd())
 def checkEnvironment():
     print(api_hash)
     print(phone)
@@ -53,7 +54,6 @@ def getgif():
     thefile = "../gifdump/file.mp4"
     return thefile
 
-
 def generate_random_response():
     responses = [
         "Hi there, sorry, but I'm away now. Please contact me later",
@@ -65,17 +65,24 @@ def generate_random_response():
     return responses[index]
 
 #Auto-reply message
-message= "This user is asleep. Please do not distrub. ETR: ??"
+me = "me"
 
-# Create the client and connect
-# use sequential_updates=True to respond to messages one at a time
-with TelegramClient("anon", api_id, api_hash, sequential_updates=True) as client:
-    to = "me"
+# # Create the client and connect. Commented out the following 1 line
+# # use sequential_updates=True to respond to messages one at a time
+client = TelegramClient(f"sessions/anon", api_id, api_hash, sequential_updates=True)
+
+client.start(phone, password)
+
+client.send_message(me, "Hello myself")
+
+
+if __name__ == '__main__':
     # The trigger that replies
     @client.on(events.NewMessage())
     async def handle_message(event):
         print("Got your message")
         print(event.from_id)
+        client.send_file('me', getgif())
         # print(event)
         # await event.respond(f'Saved your photo babe')
 
@@ -91,29 +98,29 @@ with TelegramClient("anon", api_id, api_hash, sequential_updates=True) as client
                 #if this particular person messages me.
                 if  event.message.peer_id.user_id ==555332310:
                     #send file to this particular person. (can be another person as well. So take note of the telegram username in the case"Johnnyboiii")
-                    await client.send_file('Johnnyboiii', getgif())
+                    await client.send_file('me', getgif())
                 if "detonate" in event.message.raw_text:
-                    await event.respond(to, "Detonating explosives. Countdown starting")
+                    await event.respond(me, "Detonating explosives. Countdown starting")
                     for i in range(5, 0, -1):
-                        await event.respond(to, str(i) + "...")
+                        await event.respond(me, str(i) + "...")
                         time.sleep(1)
-                    await event.respond(to, "That was a joke.")
+                    await event.respond(me, "That was a joke.")
                 #if anyone elses.
                 else:                
-                    #spamm the poor guy anyways. :P
-                    await client.send_file('Goopher', getgif())
+                    #spamm the poor guy anyways. :P !Note: the first parameter for this is the telegram handler
+                    # await client.send_file('EvolvedApeShit', getgif())
                     #replies back to the original event with the message declared earlier.
                     response = generate_random_response()
+                    print(time.asctime(), response)  # log time and message to see how fast the program is running.
+                    print("")
                     await event.respond(response)
 
-    print(time.asctime(), '-', 'Auto-replying...')
 
-    async def main():
-        response = generate_random_response()
-        await client.send_message(to, response)
+    print(time.asctime(), '-', 'Auto-replying...')
+    client.start(phone, password)
         
-    client.loop.run_until_complete(main())
-    # client.run_until_disconnected()
+    # client.loop.run_until_complete(main())
+    client.run_until_disconnected()
     print(time.asctime(), '-', 'Stopped!')
 
 
