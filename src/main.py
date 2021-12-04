@@ -1,14 +1,15 @@
 import time
 from telethon.sync import TelegramClient, events
-import requests
-import json
-import urllib
+from telethon.tl.functions.messages import GetAllStickersRequest, GetStickerSetRequest
+from telethon.tl.types import InputStickerSetID
 import urllib.request
 import os
 import random
 
 from dotenv import load_dotenv
 load_dotenv()
+
+
 
 
 api_id = os.environ.get("telegram_api_id")
@@ -18,10 +19,6 @@ session_file = os.environ.get("telegram_session_file") #this is the username. It
 #optional
 password = os.environ.get("telegram_password")
 
-#giphy
-giphy_api_key =os.environ.get("giphy_api")
- 
-print(os.getcwd())
 def checkEnvironment():
     print(api_hash)
     print(phone)
@@ -32,27 +29,7 @@ checkEnvironment()
 
 #file =  "C:\\Users\\eddie\\Desktop\\telegram coding\\"
 
-def getgif():
-    url = "https://api.giphy.com/v1/gifs/random?api_key=" +giphy_api_key+ "&tag=&rating=R"
-    #r = requests.get(url = url)
-    #print(r.url)
-    #print(r.content)
 
-    #response = urllib.request.urlopen(url).read()
-    response = urllib.request.urlopen(url).read()
-    jsonResponse = json.loads(response.decode('utf-8'))
-
-
-    endurl = jsonResponse["data"]["images"]["original"]["mp4"] 
-    key = jsonResponse["data"]["id"]
-
-
-    r = requests.get("https://i.giphy.com/media/" + key  + "/giphy.mp4", allow_redirects=True)
-    open("../gifdump/file.mp4","wb").write(r.content)
-
-
-    thefile = "../gifdump/file.mp4"
-    return thefile
 
 def generate_random_response():
     responses = [
@@ -73,18 +50,28 @@ client = TelegramClient(f"sessions/anon", api_id, api_hash, sequential_updates=T
 
 client.start(phone, password)
 
-client.send_message(me, "Hello myself")
+client.send_message(me, "Initiating program")
 
+async def sendRandomSticker():
+    sticker_sets = await client(GetAllStickersRequest(0))
+    sticker_set_randnum = random.randint(0, len(sticker_sets.sets))
+    sticker_set = sticker_sets.sets[sticker_set_randnum]
+    stickers = await client(GetStickerSetRequest(
+        stickerset=InputStickerSetID(
+            id=sticker_set.id, 
+            access_hash=sticker_set.access_hash
+        )
+    ))
+    sticker_randnum = random.randint(0, len(stickers.documents))
+    await client.send_file("me", stickers.documents[sticker_randnum])
 
 if __name__ == '__main__':
-    # The trigger that replies
+    # Triggers on any message, even when messaging yourself
     @client.on(events.NewMessage())
     async def handle_message(event):
         print("Got your message")
         print(event.from_id)
-        client.send_file('me', getgif())
-        # print(event)
-        # await event.respond(f'Saved your photo babe')
+        await sendRandomSticker()
 
     @client.on(events.NewMessage(incoming=True))
     async def handle_new_message(event):
@@ -96,9 +83,6 @@ if __name__ == '__main__':
                 time.sleep(1)  # pause for 1 second to rate-limit automatic replies
 
                 #if this particular person messages me.
-                if  event.message.peer_id.user_id ==555332310:
-                    #send file to this particular person. (can be another person as well. So take note of the telegram username in the case"Johnnyboiii")
-                    await client.send_file('me', getgif())
                 if "detonate" in event.message.raw_text:
                     await event.respond(me, "Detonating explosives. Countdown starting")
                     for i in range(5, 0, -1):
