@@ -52,9 +52,9 @@ client.start(phone, password)
 
 client.send_message(me, "Initiating program")
 
-async def sendRandomSticker():
+async def sendRandomSticker(to):
     sticker_sets = await client(GetAllStickersRequest(0))
-    sticker_set_randnum = random.randint(0, len(sticker_sets.sets))
+    sticker_set_randnum = random.randint(0, len(sticker_sets.sets) - 1)
     sticker_set = sticker_sets.sets[sticker_set_randnum]
     stickers = await client(GetStickerSetRequest(
         stickerset=InputStickerSetID(
@@ -62,34 +62,33 @@ async def sendRandomSticker():
             access_hash=sticker_set.access_hash
         )
     ))
-    sticker_randnum = random.randint(0, len(stickers.documents))
-    await client.send_file("me", stickers.documents[sticker_randnum])
+    sticker_randnum = random.randint(0, len(stickers.documents) - 1)
+    await client.send_file(to, stickers.documents[sticker_randnum])
+    print("sent sticker")
 
 if __name__ == '__main__':
     # Triggers on any message, even when messaging yourself
     @client.on(events.NewMessage())
     async def handle_message(event):
-        print("Got your message")
-        print(event.from_id)
-        await sendRandomSticker()
+        print("This is meant to handle messages to myself")
 
     @client.on(events.NewMessage(incoming=True))
     async def handle_new_message(event):
         if event.is_private:  # only auto-reply to private chats
             _from = await event.client.get_entity(event.from_id)  # this lookup will be cached by telethon
+            to = _from.username
             print(f"From: {_from}")
             if not _from.bot:  # skip auto-reply to bots
-                print(time.asctime(), '-', event.message)  # optionally log time and message
+                print(time.asctime(), '-', event.message.message)  # optionally log time and message
                 time.sleep(1)  # pause for 1 second to rate-limit automatic replies
-
-                #if this particular person messages me.
-                if "detonate" in event.message.raw_text:
-                    await event.respond(me, "Detonating explosives. Countdown starting")
+                if "detonate" == event.message.message:
+                    await event.respond("Detonating explosives. Countdown starting")
                     for i in range(5, 0, -1):
-                        await event.respond(me, str(i) + "...")
+                        await event.respond(str(i) + "...")
                         time.sleep(1)
-                    await event.respond(me, "That was a joke.")
-                #if anyone elses.
+                    await event.respond("That was a joke.")
+                elif "sticker" == event.message.message:
+                    await sendRandomSticker(to)
                 else:                
                     #spamm the poor guy anyways. :P !Note: the first parameter for this is the telegram handler
                     # await client.send_file('EvolvedApeShit', getgif())
@@ -101,7 +100,6 @@ if __name__ == '__main__':
 
 
     print(time.asctime(), '-', 'Auto-replying...')
-    client.start(phone, password)
         
     # client.loop.run_until_complete(main())
     client.run_until_disconnected()
