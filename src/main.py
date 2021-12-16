@@ -76,7 +76,7 @@ if __name__ == '__main__':
     async def handle_new_message(event):
         if event.is_private:  # only auto-reply to private chats
             _from = await event.client.get_entity(event.from_id)  # this lookup will be cached by telethon
-            to = _from.username
+            to = event.message.peer_id.user_id
             print(f"From: {_from}")
             if not _from.bot:  # skip auto-reply to bots
                 print(time.asctime(), '-', event.message.message)  # optionally log time and message
