@@ -1,4 +1,4 @@
-from telethon.sync import TelegramClient
+from telethon.sync import TelegramClient 
 
 # Input the following information
 # You can retrieve the following API information through this website: https://my.telegram.org/apps
@@ -11,7 +11,7 @@ phone_number = "<YOUR PHONE NUMBER>" # Make sure to include the country code
 client = TelegramClient(f"anon", api_id, api_hash, sequential_updates=True)
 client.start(phone_number)
 
-if __name__ == '__main__':
+if __name__ == '__main__': # entry point of the application
     print('Program initiated')        
     client.run_until_disconnected()
 
