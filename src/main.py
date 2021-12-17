@@ -12,6 +12,7 @@ client = TelegramClient(f"anon", api_id, api_hash, sequential_updates=True)
 client.start(phone_number)
 
 if __name__ == '__main__': # entry point of the application
-    print('Program initiated')        
+    print('Program initiated')
+    client.send_message("me", "Hello world!") # Sends a message to yourself
     client.run_until_disconnected()
 
