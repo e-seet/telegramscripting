@@ -1,7 +1,10 @@
-import os
+import os # import os
 from telethon.sync import TelegramClient, events
 from telethon.tl.types import PeerUser # Import events!
 
+
+# Moving our secrets to a separate file called .env 
+# Have to create a new file manually
 api_id = os.environ.get("telegram_api_id")
 api_hash = os.environ.get("telegram_api_hash")
 phone_number = os.environ.get("phone_number") 
@@ -16,7 +19,7 @@ if __name__ == '__main__':
     print('Program initiated')
     client.send_message("me", "Initiating program")
 
-
+    # Event handler. RUns code whenever a message is snet or received
     @client.on(events.NewMessage())
     async def handle_message(event):
         await client.send_message("me", "Hello myself!") # Make sure to await the send_message function!
