@@ -1,16 +1,24 @@
 import os
 from telethon.sync import TelegramClient, events
-from telethon.tl.types import PeerUser # Import events!
+from telethon.tl.types import PeerUser 
+import random # Imported random
 
 api_id = os.environ.get("telegram_api_id")
 api_hash = os.environ.get("telegram_api_hash")
 phone_number = os.environ.get("phone_number") 
 
-# Create the client and connect. Commented out the following 1 line
-# use sequential_updates=True to respond to messages one at a time
-client = TelegramClient(f"anon", api_id, api_hash, sequential_updates=True)
+client = TelegramClient(f"sessions/anon", api_id, api_hash, sequential_updates=True) # Created a sessions folder. Moved the session file into a folder called sessions
 client.start(phone_number)
 
+# Added function
+def generate_random_response():
+    responses = [
+        "Fill in whatever you want here",
+        "It's better to write your own responses",
+        "Minimum 3 responses, you can have more if you want!"
+    ]
+    random_index = random.randint(0, len(responses) - 1)
+    return responses[random_index]
 
 if __name__ == '__main__':
     print('Program initiated')
@@ -19,15 +27,7 @@ if __name__ == '__main__':
 
     @client.on(events.NewMessage())
     async def handle_message(event):
-        await client.send_message("me", "Hello myself!") # Make sure to await the send_message function!
-        # await event.respond("Hello myself!!") # Another way to reply. Difference being it will automatically reply to the sender
-        
-        # Exploring Further
-        # await client.send_message("Me", f"You messaged me on {event.message.date}")
-        # user = await event.get_input_sender()
-        user = await client.get_entity(PeerUser(event.message.peer_id.user_id))
-        print(user)
-        await client.send_message("Me", f"You are {user.first_name} {user.last_name} and you messaged me on {event.message.date}")
+        await event.respond(generate_random_response())
         
     client.run_until_disconnected()
 
