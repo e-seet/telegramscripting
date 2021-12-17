@@ -15,5 +15,3 @@ if __name__ == '__main__':
     print('Program initiated')        
     client.run_until_disconnected()
 
-
-
