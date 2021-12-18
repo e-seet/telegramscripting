@@ -5,11 +5,13 @@ from telethon.tl.functions.messages import ImportChatInviteRequest
 import random # Imported random
 import time
 
+from dotenv import load_dotenv
+
 api_id = os.environ.get("telegram_api_id")
 api_hash = os.environ.get("telegram_api_hash")
 phone_number = os.environ.get("phone_number") 
 
-client = TelegramClient(f"sessions/anon", api_id, api_hash, sequential_updates=True) # Created a sessions folder. Moved the session file into a folder called sessions
+client = TelegramClient(f"sessions/anon", api_id, api_hash) # Created a sessions folder. Moved the session file into a folder called sessions
 client.start(phone_number)
 
 # Added function
@@ -40,8 +42,11 @@ if __name__ == '__main__':
         if event.is_reply: # checks to see if sent message == .save
             replied = await event.get_reply_message()
             sender = replied.sender
-            await client.download_profile_photo(sender, f"images/{sender.username}.jpg")
-            await event.respond('Saved your photo {}'.format(sender.username))
+            # Downloads the photo of the person you replied and stores the downloaded file's path in the variable: profile_path
+            profile_path = await client.download_profile_photo(sender, f"images/{sender.username}.jpg") 
+            # Uses the downloaded file and sends it back to the one you replied
+            await client.send_file(sender, profile_path, caption="Your profile picture sucks")
+            # await event.respond('Your profile picture suchs, {}'.format(sender.username))
         
     # # Additional features
     # @client.on(events.UserUpdate()) # Occurs whenever a user goes online or starts typing
@@ -57,6 +62,4 @@ if __name__ == '__main__':
 
 
     client.run_until_disconnected()
-
-
 
