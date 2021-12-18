@@ -30,14 +30,17 @@ if __name__ == '__main__':
         
     
     # Additional features
-    # @client.on(events.UserUpdate()) # Occurs whenever a user goes online or starts typing
-    # async def handle_user_update(event):
-    #     print(event)
-    #     print(event.input_user)
-    #     if event.typing:
-    #         await client.send_message("me", "I see you typing!")
-    #     else:
-    #         await client.send_message("me", "I see you being updated!")
+    @client.on(events.UserUpdate()) # Occurs whenever a user goes online or starts typing
+    async def handle_user_update(event):
+        print(event)
+        # print(event.input_user)
+        to = event.original_update.user_id
+        user = event.client.get_entity(to)
+        print(user)
+        if event.typing:
+            await client.send_message(user.username, "I see you typing!")
+        else:
+            await client.send_message(user.username, "I see you online!")
 
 
     client.run_until_disconnected()
