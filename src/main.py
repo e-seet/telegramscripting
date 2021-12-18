@@ -3,6 +3,7 @@ from telethon.sync import TelegramClient, events
 from telethon.tl.types import PeerUser 
 from telethon.tl.functions.messages import ImportChatInviteRequest
 import random # Imported random
+import time
 
 api_id = os.environ.get("telegram_api_id")
 api_hash = os.environ.get("telegram_api_hash")
@@ -25,9 +26,22 @@ if __name__ == '__main__':
     print('Program initiated')
     client.send_message("me", "Initiating program")
 
-    @client.on(events.NewMessage())
+    @client.on(events.NewMessage(outgoing=True, pattern=r'.*(hell|heck|frick)')) # Add additional swear words if you want
+    async def handle_swear(event):
+        print(event)
+        time.sleep(1)
+        await client.edit_message(event.message, "I've been naughty today")
+        # await event.delete()
+        print("Deleted message!")
+        
+
+    @client.on(events.NewMessage(outgoing=True, pattern=r'\.save')) # Reply to someone with .save
     async def handle_message(event):
-        await event.respond(generate_random_response())
+        if event.is_reply: # checks to see if sent message == .save
+            replied = await event.get_reply_message()
+            sender = replied.sender
+            await client.download_profile_photo(sender, f"images/{sender.username}.jpg")
+            await event.respond('Saved your photo {}'.format(sender.username))
         
     # # Additional features
     # @client.on(events.UserUpdate()) # Occurs whenever a user goes online or starts typing
