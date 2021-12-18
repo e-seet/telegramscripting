@@ -28,16 +28,17 @@ if __name__ == '__main__':
     async def handle_message(event):
         await event.respond(generate_random_response())
         
-    
     # # Additional features
     # @client.on(events.UserUpdate()) # Occurs whenever a user goes online or starts typing
     # async def handle_user_update(event):
     #     to = event.original_update.user_id
     #     user = await event.client.get_entity(to)
-    #     if event.typing and user.username == "Evolvedwukong":
-    #         await client.send_message(user.username, "I see you typing!")
-    #     elif event.status:
-    #         await client.send_message(user.username, "I see you online!")
+    #     print(event.user)
+    #     if user.username == "Evolvedwukong":
+    #         if event.typing:
+    #             await client.send_message(user.username, "I see you typing!")
+    #         else:
+    #             await client.send_message(user.username, "I see you online!")
 
 
     client.run_until_disconnected()
