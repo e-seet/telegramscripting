@@ -1,6 +1,7 @@
 import os
 from telethon.sync import TelegramClient, events
 from telethon.tl.types import PeerUser 
+from telethon.tl.functions.messages import ImportChatInviteRequest
 import random # Imported random
 
 api_id = os.environ.get("telegram_api_id")
