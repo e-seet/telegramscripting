@@ -24,11 +24,22 @@ if __name__ == '__main__':
     print('Program initiated')
     client.send_message("me", "Initiating program")
 
-
     @client.on(events.NewMessage())
     async def handle_message(event):
         await event.respond(generate_random_response())
         
+    
+    # Additional features
+    # @client.on(events.UserUpdate()) # Occurs whenever a user goes online or starts typing
+    # async def handle_user_update(event):
+    #     print(event)
+    #     print(event.input_user)
+    #     if event.typing:
+    #         await client.send_message("me", "I see you typing!")
+    #     else:
+    #         await client.send_message("me", "I see you being updated!")
+
+
     client.run_until_disconnected()
 
 
