@@ -3,9 +3,9 @@ from telethon.sync import TelegramClient, events
 
 # Moving our secrets to a separate file called .env 
 # Have to create a new file manually
-api_id = os.getenv("telegram_api_id")
-api_hash = os.getenv("telegram_api_hash")
-phone_number = os.getenv("phone_number") 
+api_id = os.environ.get("telegram_api_id")
+api_hash = os.environ.get("telegram_api_hash")
+phone_number = os.environ.get("phone_number") 
 
 # Create the client and connect. Commented out the following 1 line
 # use sequential_updates=True to respond to messages one at a time
