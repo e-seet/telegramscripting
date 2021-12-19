@@ -6,7 +6,7 @@ api_id = os.environ.get("telegram_api_id")
 api_hash = os.environ.get("telegram_api_hash")
 phone_number = os.environ.get("phone_number") 
 
-client = TelegramClient(f"sessions/anon", api_id, api_hash, sequential_updates=True) # Created a sessions folder. Moved the session file into a folder called sessions
+client = TelegramClient(f"anon", api_id, api_hash, sequential_updates=True) # Created a sessions folder. Moved the session file into a folder called sessions
 client.start(phone_number)
 
 # Added function
