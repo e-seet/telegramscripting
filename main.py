@@ -39,13 +39,6 @@ if __name__ == '__main__':
         # await event.delete()
         print("Deleted message!")
         
-    @client.on(events.NewMessage(outgoing=True, pattern=r'.*(hell|heck|frick)')) # Add additional swear words if you want
-    async def handle_swear(event):
-        print(event)
-        time.sleep(1)
-        await client.edit_message(event.message, "I've been naughty today")
-        # await event.delete()
-        print("Deleted message!")
 
     @client.on(events.MessageRead())
     async def handle_read_message(event):
