@@ -1,19 +1,16 @@
 import os # import os
 from telethon.sync import TelegramClient, events
-from telethon.tl.types import PeerUser # Import events!
-
 
 # Moving our secrets to a separate file called .env 
 # Have to create a new file manually
-api_id = os.environ.get("telegram_api_id")
-api_hash = os.environ.get("telegram_api_hash")
-phone_number = os.environ.get("phone_number") 
+api_id = os.getenv("telegram_api_id")
+api_hash = os.getenv("telegram_api_hash")
+phone_number = os.getenv("phone_number") 
 
 # Create the client and connect. Commented out the following 1 line
 # use sequential_updates=True to respond to messages one at a time
 client = TelegramClient(f"anon", api_id, api_hash, sequential_updates=True)
 client.start(phone_number)
-
 
 if __name__ == '__main__':
     print('Program initiated')
@@ -28,7 +25,7 @@ if __name__ == '__main__':
         # Exploring Further
         # await client.send_message("Me", f"You messaged me on {event.message.date}")
         # user = await event.get_input_sender()
-        user = await client.get_entity(PeerUser(event.message.peer_id.user_id))
+        user = await client.get_entity(event.message.peer_id.user_id)
         print(user)
         await client.send_message("Me", f"You are {user.first_name} {user.last_name} and you messaged me on {event.message.date}")
         
