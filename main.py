@@ -31,12 +31,21 @@ if __name__ == '__main__':
 
     @client.on(events.NewMessage(outgoing=True, pattern=r'.*(hell|heck|frick)')) # Add additional swear words if you want
     async def handle_swear(event):
-        print(event)
         time.sleep(1)
         await client.edit_message(event.message, "I've been naughty today")
         # await event.delete()
         print("Deleted message!")
 
+    @client.on(events.MessageRead())
+    async def handle_read_message(event):
+        time.sleep(1)
+        if hasattr(event.original_update.peer, "user_id"):
+            user = await client.get_entity(event.original_update.peer.user_id)
+            # Change the first parameter if you want to send to someone else, maybe the user who read your message
+            await client.send_message("me", f"I see you have read my message {user.first_name} {user.last_name}")
+        else:
+            print("Someone read my message from a group chat")
+    
     # # Additional features
     # @client.on(events.UserUpdate()) # Occurs whenever a user goes online or starts typing
     # async def handle_user_update(event):
@@ -51,32 +60,35 @@ if __name__ == '__main__':
 
 
     #additonal feature. Auto replying to group chat and replying to specifc message in groupchat
-    # @client.on(events.NewMessage(incoming=True))
-    # async def handle_new_message(event):
-    #     if event.is_private:     
+    @client.on(events.NewMessage())
+    async def handle_new_message(event):
+        # print(event)
+        # user = await event.get_sender()
+        # print(user)
+        group = await client.get_entity(649973711)
+        # await client.send_message(group, "Hello there group, this is an automated message")
+        # if event.is_private: 
             
-    #         #ignore someone 
-    #         # if event.message.peer_id.user_id != 41197530:
-    #             #the reply to private chat
-    #             if event.message.peer_id.user_id == 876675202: 
-    #                 await client.send_message(event.message.peer_id,message="Hello")  # this works, send back to private chat
+        #     #ignore someone 
+        #     # if event.message.peer_id.user_id != 41197530:
+        #         #the reply to private chat
+        #         if event.message.peer_id.user_id == 876675202: 
+        #             await client.send_message(event.message.peer_id,message="Hello")  # this works, send back to private chat
 
-    #     #not private
-    #     else:
-    #             #check that it is a reply message
-    #             if event.is_reply == True : 
-    #                 print(event.original_update.chat_id) #the group id should be t he same as the below 
-    #                 if event.original_update.chat_id ==  704140264: #the number should be the same as above 
-    #                     await event.reply("wow")
+        # #not private
+        # else:
+                #check that it is a reply message
+                # if event.is_reply == True : 
+                #     print(event.original_update.chat_id) #the group id should be  he same as the below 
+                #     if event.original_update.chat_id ==  649973711: #the number should be the same as above 
+                #         await event.reply("wow")
 
-    #             else:
-    #                 #both replies back to the group chat
-    #                 if event.message.peer_id.chat_id == 704140264:
-    #                     await client.send_message(event.message.peer_id,message="Hi Group")  
-                        
-
-    #                 if event.original_update.chat_id == 704140264:
-    #                     await client.send_message(event.original_update.chat_id,message="Hi Groups")  
+                # else:
+                #     #both replies back to the group chat
+                #     if event.message.peer_id.chat_id == 649973711:
+                #         await client.send_message(event.message.peer_id,message="Hi Group")  
+                #     if event.original_update.chat_id == 649973711:
+                #         await client.send_message(event.original_update.chat_id,message="Hi Groups")  
                         
 
 
