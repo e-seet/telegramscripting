@@ -55,6 +55,16 @@ if __name__ == '__main__':
         # await event.delete()
         print("Deleted message!")
 
+    @client.on(events.MessageRead())
+    async def handle_read_message(event):
+        time.sleep(1)
+        if hasattr(event.original_update.peer, "user_id"):
+            user = await client.get_entity(event.original_update.peer.user_id)
+            # Change the first parameter if you want to send to someone else, maybe the user who read your message
+            await client.send_message("me", f"I see you have read my message {user.first_name} {user.last_name}")
+        else:
+            print("Someone read my message from a group chat")
+    
     @client.on(events.NewMessage(pattern=r'.*sticker')) # Sends a sticker whether you or someone else says sticker
     async def handle_sticker(event):
         user = await event.get_sender()
