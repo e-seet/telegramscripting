@@ -2,3 +2,6 @@
 /sessions
 /gifdump
 sessions/*
+*.session
+*.session-journal
+images/*
