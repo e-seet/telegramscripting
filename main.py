@@ -37,17 +37,6 @@ if __name__ == '__main__':
         # await event.delete()
         print("Deleted message!")
 
-    @client.on(events.NewMessage(outgoing=True, pattern=r'\.save')) # Reply to someone with .save
-    async def handle_message(event):
-        if event.is_reply: # checks to see if sent message == .save
-            replied = await event.get_reply_message()
-            sender = replied.sender
-            # Downloads the photo of the person you replied and stores the downloaded file's path in the variable: profile_path
-            profile_path = await client.download_profile_photo(sender, f"images/{sender.username}.jpg") 
-            # Uses the downloaded file and sends it back to the one you replied
-            await client.send_file(sender, profile_path, caption="Your profile picture sucks")
-            # await event.respond('Your profile picture suchs, {}'.format(sender.username))
-
     # # Additional features
     # @client.on(events.UserUpdate()) # Occurs whenever a user goes online or starts typing
     # async def handle_user_update(event):
