@@ -5,7 +5,10 @@ from telethon.tl.functions.messages import ImportChatInviteRequest
 import random # Imported random
 import time
 
+
+
 from dotenv import load_dotenv
+load_dotenv()
 
 api_id = os.environ.get("telegram_api_id")
 api_hash = os.environ.get("telegram_api_hash")
@@ -29,13 +32,13 @@ if __name__ == '__main__':
     print('Program initiated')
     client.send_message("me", "Initiating program")
 
-    @client.on(events.NewMessage(outgoing=True, pattern=r'.*(hell|heck|frick)')) # Add additional swear words if you want
-    async def handle_swear(event):
-        print(event)
-        time.sleep(1)
-        await client.edit_message(event.message, "I've been naughty today")
-        # await event.delete()
-        print("Deleted message!")
+    # @client.on(events.NewMessage(outgoing=True, pattern=r'.*(hell|heck|frick)')) # Add additional swear words if you want
+    # async def handle_swear(event):
+    #     print(event)
+    #     time.sleep(1)
+    #     await client.edit_message(event.message, "I've been naughty today")
+    #     # await event.delete()
+    #     print("Deleted message!")
 
     # # Additional features
     # @client.on(events.UserUpdate()) # Occurs whenever a user goes online or starts typing
@@ -51,34 +54,30 @@ if __name__ == '__main__':
 
 
     #additonal feature. Auto replying to group chat and replying to specifc message in groupchat
-    # @client.on(events.NewMessage(incoming=True))
-    # async def handle_new_message(event):
-    #     if event.is_private:     
+    @client.on(events.NewMessage(incoming=True))
+    async def handle_new_message(event):
             
-    #         #ignore someone 
-    #         # if event.message.peer_id.user_id != 41197530:
-    #             #the reply to private chat
-    #             if event.message.peer_id.user_id == 876675202: 
-    #                 await client.send_message(event.message.peer_id,message="Hello")  # this works, send back to private chat
+        #private chats
+        if event.is_private:     
+                # reply to this particular person
+                if event.message.peer_id.user_id == 876675202:  #Only allow this person's message
+                    await client.send_message(event.message.peer_id,message="Hello")  # send back to private chat (whoever you receive the message from)
 
-    #     #not private
-    #     else:
-    #             #check that it is a reply message
-    #             if event.is_reply == True : 
-    #                 print(event.original_update.chat_id) #the group id should be t he same as the below 
-    #                 if event.original_update.chat_id ==  704140264: #the number should be the same as above 
-    #                     await event.reply("wow")
+        #group chats
+        else:
+                #see if someone replies to your message, then you reply to their message
+                if event.is_reply == True : 
+                    # print(event.original_update.chat_id) 
+                    if event.original_update.chat_id ==  704140264:   
+                        await event.reply("wow") #reply to the message.
 
-    #             else:
-    #                 #both replies back to the group chat
-    #                 if event.message.peer_id.chat_id == 704140264:
-    #                     await client.send_message(event.message.peer_id,message="Hi Group")  
+                #reply to any message in your group
+                else:
+                    print(event.original_update)
+                    #both replies back to the group chat
+                    if event.message.peer_id.chat_id == 876675202: #participants spam group
+                        await client.send_message(event.message.peer_id,message="Hi Group")   #auto reply to group
                         
-
-    #                 if event.original_update.chat_id == 704140264:
-    #                     await client.send_message(event.original_update.chat_id,message="Hi Groups")  
-                        
-
 
     client.run_until_disconnected()
 
