@@ -24,12 +24,8 @@ if __name__ == '__main__':
         
         # Exploring Further
         # await client.send_message("Me", f"You messaged me on {event.message.date}")
-        # user = await event.get_input_sender()
-        user = await client.get_entity(event.message.peer_id.user_id)
+        user = await event.get_sender()
         print(user)
         await client.send_message("Me", f"You are {user.first_name} {user.last_name} and you messaged me on {event.message.date}")
         
     client.run_until_disconnected()
-
-
-
